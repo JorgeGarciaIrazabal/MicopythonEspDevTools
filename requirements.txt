@@ -1,0 +1,8 @@
+wshubsapi>=0.8.1
+glob2
+tornado
+xmlrunner
+flexmock
+ws4py
+esptool
+adafruit-ampy

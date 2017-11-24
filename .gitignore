@@ -99,3 +99,12 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+# PyCharm
+.idea/
+
+# project
+constants.py
+_py_env/
+module/module_api

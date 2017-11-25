@@ -84,6 +84,6 @@ api = HubsAPI('ws://{0}:{1}'.format(constants.SERVER_IP, constants.SERVER_PORT) 
 api.DevToolsHub.client.echo = lambda msg: msg + ' From Micropython'
 api.DevToolsHub.client.get_all_pins = get_all_pins
 api.DevToolsHub.client.set_pin = set_pin
-api.DevToolsHub.client.pin_value = pin_value
+api.DevToolsHub.client.set_pin_value = pin_value
 
 api.ws_client.listen_loop()

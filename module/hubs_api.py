@@ -118,9 +118,6 @@ class HubsAPI(object):
             self.ws_client = ws_client
             self.client = self.ClientClass()
 
-        def get_clients(self, client_ids):
-            return HubsAPI.DevToolsHubClass.ClientsInServer(client_ids, self)
-
         class ClientClass(GenericClient):
             def __init__(self):
                 pass
@@ -134,43 +131,5 @@ class HubsAPI(object):
             def set_pin(self, pin, mode):
                 pass
 
-            def pin_value(self, pin, value):
-                pass
-
-        class ClientsInServer(GenericBridge):
-            def __init__(self, client_ids, hub):
-                super(self.__class__, self).__init__(hub)
-                self.clients_ids = client_ids
-
-            def echo(self, msg):
-                """
-                :rtype : Future
-                """
-                args = list()
-                args.append(self.clients_ids)
-                args.append("echo")
-                args.append([msg])
-                return self.construct_message(args, "_client_to_clients_bridge")
-
-            def get_all_pins(self, ):
-                """
-                :rtype : Future
-                """
-                args = list()
-                args.append(self.clients_ids)
-                args.append("get_all_pins")
-                args.append([])
-                return self.construct_message(args, "_client_to_clients_bridge")
-
-            def set_pin(self, pin, mode):
-                """
-                :rtype : Future
-                """
-                args = list()
-                args.append(self.clients_ids)
-                args.append("set_pin")
-                args.append([pin, mode])
-                return self.construct_message(args, "_client_to_clients_bridge")
-
-            def pin_value(self, pin, value):
+            def set_pin_value(self, pin, value):
                 pass

@@ -39,6 +39,7 @@ app = web.Application([
 if __name__ == '__main__':
     HubsInspector.include_hubs_in("**/*_hub.py")  # use glob path patterns
     HubsInspector.inspect_implemented_hubs()
+    HubsInspector.construct_js_file("webclient/src/services/hubsApi.js")
     log.debug("starting...")
     app.listen(8888)
 

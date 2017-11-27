@@ -2,6 +2,7 @@ import machine
 from machine import Pin
 
 import constants
+from module import Module
 
 try:
     import time_ as time
@@ -42,30 +43,31 @@ def connect():
         print("unable to connected!!!!!")
 
 
-def get_all_pins():
-    pins = []
-    invalid_pins = [0, 1, 2, 3, 4, 9]
-    for i in range(20):
-        if i in invalid_pins:
-            continue
-        try:
-            pin = Pin(i, Pin.OUT)
-            pins.append(i)
-            my_pins[i] = pin
-        except Exception:
-            pass
-    return pins
+u_module = Module('upython')
+u_module.setup()
 
 
-def set_pin(pin, mode):
-    my_pins[pin] = machine.Pin(pin, mode)
+def get_all_components():
+    return u_module.get_module_info()
+
+
+def change_component_mode(name, mode):
+    u_module.change_component_mode(name, mode)
     return True
 
 
-def pin_value(pin, value):
-    if value is None:
-        return my_pins[pin].value()
-    return my_pins[pin].value(value)
+def change_component_name(old_name, new_name):
+    return u_module.change_component_name(old_name, new_name)
+
+
+def set_component_value(name, value):
+    u_module.get_component_by_name(name).value(value)
+    return True
+
+
+def save_config():
+    u_module.save_config()
+    return True
 
 
 start = time.ticks_ms()  # get millisecond counter
@@ -81,9 +83,11 @@ from hubs_api import HubsAPI
 
 api = HubsAPI('ws://{0}:{1}'.format(constants.SERVER_IP, constants.SERVER_PORT) + '/upython')
 
-api.DevToolsHub.client.echo = lambda msg: msg + ' From Micropython'
-api.DevToolsHub.client.get_all_pins = get_all_pins
-api.DevToolsHub.client.set_pin = set_pin
-api.DevToolsHub.client.set_pin_value = pin_value
+api.DevToolsHub.client.get_all_components = get_all_components
+api.DevToolsHub.client.change_component_mode = change_component_mode
+api.DevToolsHub.client.change_component_name = change_component_name
+api.DevToolsHub.client.set_component_value = set_component_value
+api.DevToolsHub.client.save_config = save_config
+
 
 api.ws_client.listen_loop()

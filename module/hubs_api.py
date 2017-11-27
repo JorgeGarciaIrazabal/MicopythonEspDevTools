@@ -59,7 +59,6 @@ def construct_api_client_class(client_class):
             self.is_opened = True
 
         def received_message(self, m):
-            print("MESSAGE RECEIVED: ", m)
             try:
                 msg_obj = json.loads(m)
             except Exception as e:
@@ -122,14 +121,17 @@ class HubsAPI(object):
             def __init__(self):
                 pass
 
-            def echo(self, msg):
+            def get_all_components(self, ):
                 pass
 
-            def get_all_pins(self, ):
+            def change_component_mode(self, name, mode):
                 pass
 
-            def set_pin(self, pin, mode):
+            def change_component_name(self, old_name, new_name):
                 pass
 
-            def set_pin_value(self, pin, value):
+            def set_component_value(self, name, value):
+                pass
+
+            def save_config(self):
                 pass

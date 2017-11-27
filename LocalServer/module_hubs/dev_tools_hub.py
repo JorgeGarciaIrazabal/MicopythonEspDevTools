@@ -15,8 +15,9 @@ class DevToolsHub(Hub):
         It is just to inform, it is not mandatory but recommended
         """
         return dict(
-            echo=lambda msg: None,
-            get_all_pins=lambda: None,
-            set_pin=lambda pin, mode: None,
-            set_pin_value=lambda pin, value: None,
+            get_all_components=lambda: None,
+            change_component_mode=lambda name, mode: None,
+            change_component_name=lambda old_name, new_name: None,
+            set_component_value=lambda name, value: None,
+            save_config=lambda: None,
         )

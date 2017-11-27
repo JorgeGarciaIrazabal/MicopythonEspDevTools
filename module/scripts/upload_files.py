@@ -10,8 +10,9 @@ files = [
         'main.py',
         'boot.py',
         'constants.py',
-        'ws_client.py',
+        'module.py',
         'hubs_api.py',
+        'ws_client.py',
         'ws_protocol.py'
     ]
 ]

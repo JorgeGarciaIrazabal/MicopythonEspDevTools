@@ -260,13 +260,15 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
     this.DevToolsHub.client = {
         __HUB_NAME : 'DevToolsHub',
         
-        echo : emptyFunction(),
+        changeComponentMode : emptyFunction(),
 
-        getAllPins : emptyFunction(),
+        changeComponentName : emptyFunction(),
 
-        setPin : emptyFunction(),
+        getAllComponents : emptyFunction(),
 
-        setPinValue : emptyFunction()
+        saveConfig : emptyFunction(),
+
+        setComponentValue : emptyFunction()
     };
     this.DevToolsHub.getClients = function(clientsIds){
         return {
@@ -275,31 +277,38 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
                 var bodyArgs = [this.clientsIds, functionName, functionArgs];
                 return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
             },
-            echo : function (msg){
+            changeComponentMode : function (name, mode){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
-                var bodyArgs = [this.clientsIds, 'echo', funcArgs];
+                var bodyArgs = [this.clientsIds, 'change_component_mode', funcArgs];
                 return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
             },
 
-            getAllPins : function (){
+            changeComponentName : function (oldName, newName){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
-                var bodyArgs = [this.clientsIds, 'get_all_pins', funcArgs];
+                var bodyArgs = [this.clientsIds, 'change_component_name', funcArgs];
                 return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
             },
 
-            setPin : function (pin, mode){
+            getAllComponents : function (){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
-                var bodyArgs = [this.clientsIds, 'set_pin', funcArgs];
+                var bodyArgs = [this.clientsIds, 'get_all_components', funcArgs];
                 return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
             },
 
-            setPinValue : function (pin, value){
+            saveConfig : function (){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
-                var bodyArgs = [this.clientsIds, 'set_pin_value', funcArgs];
+                var bodyArgs = [this.clientsIds, 'save_config', funcArgs];
+                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+            },
+
+            setComponentValue : function (name, value){
+                
+                var funcArgs = Array.prototype.slice.call(arguments);
+                var bodyArgs = [this.clientsIds, 'set_component_value', funcArgs];
                 return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
             }
         }

@@ -20,7 +20,7 @@ class ModuleManager extends React.Component {
     constructor(props) {
         super();
         this.module = props.module;
-        this.moduleApi = Api.DevToolsHub.getClients([this.module.name]);
+        this.moduleApi = Api.ModuleHub.getClients([this.module.name]);
         this.handleValueChange = debounce(this.handleValueChange, 300)
     }
 
@@ -63,7 +63,6 @@ class ModuleManager extends React.Component {
     async saveConfig() {
         await this.moduleApi.saveConfig();
     }
-
 
     render() {
         return (

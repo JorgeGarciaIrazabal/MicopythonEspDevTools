@@ -96,7 +96,7 @@ def construct_api_client_class(client_class):
                 print(e)
 
         def listen_loop(self):
-            while self.is_opened:
+            while self.client.open:
                 self.recv()
 
     return WSHubsAPIClient
@@ -106,14 +106,14 @@ class HubsAPI(object):
     def __init__(self, url, client_class=None):
         api_client_class = construct_api_client_class(client_class)
         self.ws_client = api_client_class(self, url)
-        self.DevToolsHub = self.DevToolsHubClass(self.ws_client)
+        self.ModuleHub = self.ModuleHubClass(self.ws_client)
 
     def serialize_object(self, obj2ser):
         return json.dumps(obj2ser)
 
-    class DevToolsHubClass(object):
+    class ModuleHubClass(object):
         def __init__(self, ws_client):
-            self.name = "DebToolsHub"
+            self.name = "ModuleHub"
             self.ws_client = ws_client
             self.client = self.ClientClass()
 

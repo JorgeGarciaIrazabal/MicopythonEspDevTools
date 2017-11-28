@@ -1,11 +1,13 @@
 import json
 import logging.config
-import os
 from concurrent.futures import ThreadPoolExecutor
 
 from tornado import web, ioloop
 from wshubsapi.connection_handlers.tornado_handler import ConnectionHandler
 from wshubsapi.hubs_inspector import HubsInspector
+
+logging.config.dictConfig(json.load(open('logging.json')))
+log = logging.getLogger(__name__)
 
 
 class MyConnectionHandler(ConnectionHandler):
@@ -27,16 +29,10 @@ class MyConnectionHandler(ConnectionHandler):
         self.executor.submit(super().on_message, message)
 
 
-logging.config.dictConfig(json.load(open('logging.json')))
-log = logging.getLogger(__name__)
-
-settings = {"static_path": os.path.join("Clients/_static")}
-
-app = web.Application([
-    (r'/(.*)', MyConnectionHandler),
-], **settings)
-
 if __name__ == '__main__':
+    app = web.Application([
+        (r'/(.*)', MyConnectionHandler),
+    ])
     HubsInspector.include_hubs_in("**/*_hub.py")  # use glob path patterns
     HubsInspector.inspect_implemented_hubs()
     HubsInspector.construct_js_file("webclient/src/services/hubsApi.js")

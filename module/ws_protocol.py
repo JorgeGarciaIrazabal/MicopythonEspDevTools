@@ -31,19 +31,12 @@ URI = namedtuple('URI', ('hostname', 'port', 'path'))
 
 
 def urlparse(uri):
-    """Parse ws:// URLs"""
     match = URL_RE.match(uri)
     if match:
         return URI(match.group(1), int(match.group(2)), match.group(3))
 
 
 class Websocket:
-    """
-    Basis of the Websocket protocol.
-
-    This can probably be replaced with the C-based websocket module, but
-    this one currently supports more options.
-    """
     is_client = False
 
     def __init__(self, sock):
@@ -60,19 +53,11 @@ class Websocket:
         self._sock.settimeout(timeout)
 
     def read_frame(self, max_size=None):
-        """
-        Read a frame from the socket.
-        See https://tools.ietf.org/html/rfc6455#section-5.2 for the details.
-        """
-
-        # Frame header
         byte1, byte2 = struct.unpack('!BB', self._sock.read(2))
 
-        # Byte 1: FIN(1) _(1) _(1) _(1) OPCODE(4)
         fin = bool(byte1 & 0x80)
         opcode = byte1 & 0x0f
 
-        # Byte 2: MASK(1) LENGTH(7)
         mask = bool(byte2 & (1 << 7))
         length = byte2 & 0x7f
 
@@ -87,7 +72,6 @@ class Websocket:
         try:
             data = self._sock.read(length)
         except MemoryError:
-            # We can't receive this many bytes, close the socket
             self.close(code=CLOSE_TOO_BIG)
             return True, OP_CLOSE, None
 
@@ -98,17 +82,11 @@ class Websocket:
         return fin, opcode, data
 
     def write_frame(self, opcode, data=b''):
-        """
-        Write a frame to the socket.
-        See https://tools.ietf.org/html/rfc6455#section-5.2 for the details.
-        """
         fin = True
         mask = self.is_client  # messages sent by client are masked
 
         length = len(data)
 
-        # Frame header
-        # Byte 1: FIN(1) _(1) _(1) _(1) OPCODE(4)
         byte1 = 0x80 if fin else 0
         byte1 |= opcode
 
@@ -140,14 +118,6 @@ class Websocket:
         self._sock.write(data)
 
     def recv(self):
-        """
-        Receive data from the websocket.
-
-        This is slightly different from 'websockets' in that it doesn't
-        fire off a routine to process frames and put the data in a queue.
-        If you don't call recv() sufficiently often you won't process control
-        frames.
-        """
         assert self.open
 
         while self.open:
@@ -182,8 +152,6 @@ class Websocket:
                 raise ValueError(opcode)
 
     def send(self, buf):
-        """Send data to the websocket."""
-
         assert self.open
 
         if isinstance(buf, str):
@@ -197,7 +165,6 @@ class Websocket:
         self.write_frame(opcode, buf)
 
     def close(self, code=CLOSE_OK, reason=''):
-        """Close the websocket."""
         if not self.open:
             return
 

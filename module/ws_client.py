@@ -10,10 +10,6 @@ class WebsocketClient(Websocket):
 
 
 def connect(uri):
-    """
-    Connect a websocket.
-    """
-
     uri = urlparse(uri)
     assert uri
 
@@ -40,7 +36,6 @@ def connect(uri):
     header = sock.readline()[:-2]
     assert header == b'HTTP/1.1 101 Switching Protocols', header
 
-    # We don't (currently) need these headers
     while header:
         header = sock.readline()[:-2]
 

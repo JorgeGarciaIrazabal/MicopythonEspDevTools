@@ -233,32 +233,27 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
         return promise;
     };
     
-    this.DevToolsHub = {};
-    this.DevToolsHub.server = {
-        __HUB_NAME : 'DevToolsHub',
+    this.ModuleHub = {};
+    this.ModuleHub.server = {
+        __HUB_NAME : 'ModuleHub',
         
         getSubscribedClientsIds : function (){
             
-            return constructMessage('DevToolsHub', 'get_subscribed_clients_ids', arguments);
-        },
-
-        sendToAll : function (name, message){
-            arguments[1] = message === undefined ? "hello" : message;
-            return constructMessage('DevToolsHub', 'send_to_all', arguments);
+            return constructMessage('ModuleHub', 'get_subscribed_clients_ids', arguments);
         },
 
         subscribeToHub : function (){
             
-            return constructMessage('DevToolsHub', 'subscribe_to_hub', arguments);
+            return constructMessage('ModuleHub', 'subscribe_to_hub', arguments);
         },
 
         unsubscribeFromHub : function (){
             
-            return constructMessage('DevToolsHub', 'unsubscribe_from_hub', arguments);
+            return constructMessage('ModuleHub', 'unsubscribe_from_hub', arguments);
         }
     };
-    this.DevToolsHub.client = {
-        __HUB_NAME : 'DevToolsHub',
+    this.ModuleHub.client = {
+        __HUB_NAME : 'ModuleHub',
         
         changeComponentMode : emptyFunction(),
 
@@ -270,46 +265,46 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
 
         setComponentValue : emptyFunction()
     };
-    this.DevToolsHub.getClients = function(clientsIds){
+    this.ModuleHub.getClients = function(clientsIds){
         return {
             clientsIds: clientsIds,
             call: function (functionName, functionArgs) {
                 var bodyArgs = [this.clientsIds, functionName, functionArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
             changeComponentMode : function (name, mode){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'change_component_mode', funcArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
 
             changeComponentName : function (oldName, newName){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'change_component_name', funcArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
 
             getAllComponents : function (){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'get_all_components', funcArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
 
             saveConfig : function (){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'save_config', funcArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
 
             setComponentValue : function (name, value){
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'set_component_value', funcArgs];
-                return constructMessage('DevToolsHub', '_client_to_clients_bridge', bodyArgs);
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             }
         }
     };

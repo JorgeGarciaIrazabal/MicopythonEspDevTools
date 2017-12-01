@@ -108,4 +108,4 @@ ENV/
 constants.py
 _py_env/
 module/module_api
-dist/
+node_modules/

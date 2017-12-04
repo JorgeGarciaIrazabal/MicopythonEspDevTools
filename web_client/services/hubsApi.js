@@ -317,7 +317,12 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
             return constructMessage('UPythonUtilsHub', 'get_subscribed_clients_ids', arguments);
         },
 
-        isUpythonConnected : function (){
+        getUpythonClientIds : function (){
+            
+            return constructMessage('UPythonUtilsHub', 'get_upython_client_ids', arguments);
+        },
+
+        isUpythonConnected : function (id){
             
             return constructMessage('UPythonUtilsHub', 'is_upython_connected', arguments);
         },

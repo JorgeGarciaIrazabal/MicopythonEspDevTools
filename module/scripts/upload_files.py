@@ -8,12 +8,9 @@ port = '/dev/ttyUSB0'
 files = [
     f for f in [
         'main.py',
-        'boot.py',
         'constants.py',
         'module.py',
         'hubs_api.py',
-        'ws_client.py',
-        'ws_protocol.py'
     ]
 ]
 

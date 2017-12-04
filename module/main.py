@@ -1,3 +1,5 @@
+import gc
+
 import machine
 import network
 from machine import Pin
@@ -5,7 +7,6 @@ from machine import Pin
 import constants
 from hubs_api import HubsAPI
 from module import Module
-import gc
 
 try:
     import time_ as time
@@ -84,11 +85,11 @@ while True:
         try:
             api = HubsAPI('ws://{0}:{1}'.format(constants.SERVER_IP, constants.SERVER_PORT) + '/upython')
             print("connected to server")
-            api.ModuleHub.client.get_all_components = get_all_components
-            api.ModuleHub.client.change_component_mode = change_component_mode
-            api.ModuleHub.client.change_component_name = change_component_name
+            api.ModuleHub.client.get_all_components = u_module.get_module_info
+            api.ModuleHub.client.change_component_mode = u_module.change_component_mode
+            api.ModuleHub.client.change_component_name = u_module.change_component_name
             api.ModuleHub.client.set_component_value = set_component_value
-            api.ModuleHub.client.save_config = save_config
+            api.ModuleHub.client.save_config = u_module.save_config
 
             api.ws_client.listen_loop()
             del api

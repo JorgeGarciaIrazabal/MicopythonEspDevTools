@@ -1,6 +1,7 @@
 import HubsApi from './hubsApi';
 
 class Api {
+    /** @type HubsApi*/
     api;
     _isConnected = false;
 
@@ -29,4 +30,7 @@ class Api {
     }
 }
 
-export default (new Api()).api;
+/** @type HubsApi*/
+const api = (new Api()).api;
+/** @type HubsApi*/
+export default api;

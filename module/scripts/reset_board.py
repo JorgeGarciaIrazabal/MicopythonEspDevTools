@@ -3,7 +3,7 @@ import subprocess
 
 port = '/dev/ttyUSB0'
 baudrate = '115200'
-firmware = os.path.join(os.pardir, "firmware", "esp8266-20171101-v1.9.3.bin")
+firmware = os.path.join(os.pardir, "firmware", "firmware-combined.bin")
 
 if not os.path.exists(firmware):
     raise Exception("Firmware not found")

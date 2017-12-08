@@ -14,4 +14,5 @@ class ModuleHub(Hub):
             change_component_name=lambda old_name, new_name: None,
             set_component_value=lambda name, value: None,
             save_config=lambda: None,
+            read_serial=lambda: None,
         )

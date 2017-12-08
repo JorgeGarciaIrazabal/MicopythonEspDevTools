@@ -135,3 +135,6 @@ class HubsAPI(object):
 
             def save_config(self):
                 pass
+
+            def read_serial(self):
+                pass

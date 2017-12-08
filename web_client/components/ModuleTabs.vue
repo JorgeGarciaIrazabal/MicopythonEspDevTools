@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs v-if="!loading" v-model="active">
+    <v-tabs v-if="!loading" v-model="active" class="ModuleTabs__tabs">
       <v-tabs-bar class="cyan" dark>
         <v-tabs-item
           v-for="module in modules"
@@ -22,14 +22,12 @@
         </v-tabs-content>
       </v-tabs-items>
     </v-tabs>
+
     <v-container class="ModuleTabs__loader-container" v-else fluid grid-list-xl>
       <div class="spacer"></div>
       <v-progress-circular indeterminate size="100" color="primary" class="text-xs-center" />
       <div class="spacer"></div>
     </v-container>
-    <v-alert color="error" icon="warning" v-bind:value="error">
-      Error getting modules
-    </v-alert>
     <v-snackbar
       :timeout=2000
       :color="snackbarColor"
@@ -62,8 +60,7 @@
                     this.active = clientNames[0];
                 }
             } catch (e) {
-                console.warn(e);
-                this.error = e;
+                this.setErrorText(e.message);
             } finally {
                 this.loading = false;
             }
@@ -73,7 +70,6 @@
                 active: 'test',
                 modules: [],
                 loading: true,
-                error: false,
                 snackbar: false,
                 snackbarText: '',
                 snackbarColor: 'error',
@@ -90,9 +86,17 @@
 </script>
 
 <style lang="scss" scoped>
-  .ModuleTabs__loader-container {
-    display: flex;
+  .ModuleTabs {
+    &__tabs {
+      max-width: 50rem;
+      margin: auto;
+    }
+    &__loader-container {
+      display: flex;
+    }
   }
+
+
 
   .progress-circular {
     flex-grow: 0;

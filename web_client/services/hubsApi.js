@@ -261,6 +261,8 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
 
         getAllComponents : emptyFunction(),
 
+        readSerial: emptyFunction(),
+
         saveConfig : emptyFunction(),
 
         setComponentValue : emptyFunction()
@@ -290,6 +292,13 @@ function HubsAPI(serverTimeout, wsClientClass, PromiseClass) {
                 
                 var funcArgs = Array.prototype.slice.call(arguments);
                 var bodyArgs = [this.clientsIds, 'get_all_components', funcArgs];
+                return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
+            },
+
+            readSerial: function() {
+
+                var funcArgs = Array.prototype.slice.call(arguments);
+                var bodyArgs = [this.clientsIds, 'read_serial', funcArgs];
                 return constructMessage('ModuleHub', '_client_to_clients_bridge', bodyArgs);
             },
 

@@ -2,7 +2,7 @@ import gc
 
 import machine
 import network
-from machine import Pin
+from machine import Pin, UART
 
 import constants
 from hubs_api import HubsAPI
@@ -15,17 +15,7 @@ except:
 
 press_time = 0
 sta_if = None
-
-
-def resetting(pin):
-    global press_time
-    if pin.value() == 1:
-        diff = time.ticks_ms() - press_time
-        if diff > 1000:
-            machine.reset()
-    else:
-        press_time = time.ticks_ms()
-        print('getting time', press_time)
+uart = UART(0, 9600)
 
 
 def connect():
@@ -53,17 +43,8 @@ u_module = Module('upython')
 u_module.setup()
 
 
-def get_all_components():
-    return u_module.get_module_info()
-
-
-def change_component_mode(name, mode):
-    u_module.change_component_mode(name, mode)
-    return True
-
-
-def change_component_name(old_name, new_name):
-    return u_module.change_component_name(old_name, new_name)
+def read_serial():
+    return uart.read()
 
 
 def set_component_value(name, value):
@@ -76,9 +57,6 @@ def save_config():
     return True
 
 
-button = Pin(4, Pin.IN)
-button.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=resetting)
-
 while True:
     # todo, no need to connect all the time
     if connect():
@@ -90,6 +68,7 @@ while True:
             api.ModuleHub.client.change_component_name = u_module.change_component_name
             api.ModuleHub.client.set_component_value = set_component_value
             api.ModuleHub.client.save_config = u_module.save_config
+            api.ModuleHub.client.read_serial = read_serial
 
             api.ws_client.listen_loop()
             del api

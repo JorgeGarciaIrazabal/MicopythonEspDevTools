@@ -1,5 +1,5 @@
 <template>
-  <div class="ModuleManager__container">
+  <div class="ModuleManager__container" v-u-loading="loading">
     <v-container grid-list-md>
       <component-row v-for="component in module.components"
                      v-bind:component="component"
@@ -10,12 +10,7 @@
     <v-alert color="error" icon="warning" v-bind:value="errorMessage">
       {{errorMessage}}
     </v-alert>
-    <div class="ModuleManager__loader-container" v-show="loading">
-      <v-flex class="text-xs-center">
-        <v-progress-circular indeterminate size="50" color="primary" />
-      </v-flex>
-      <div class="ModuleManager__loader-container-shadow"></div>
-    </div>
+    <!--<u-loader :loading="true"></u-loader>-->
   </div>
 </template>
 

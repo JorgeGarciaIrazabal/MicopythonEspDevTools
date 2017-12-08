@@ -78,7 +78,7 @@ class Module:
                                                                              component['pin'],
                                                                              component['mode'])
         else:
-            invalid_pins = [1, 2, 3, 4, 9]
+            invalid_pins = [1, 2, 3, 9]
             for i in range(20):
                 if i in invalid_pins:
                     continue

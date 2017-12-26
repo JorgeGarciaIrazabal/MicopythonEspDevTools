@@ -1,8 +1,17 @@
 import os
 import subprocess
+import sys
 
-port = '/dev/ttyUSB0'
-baudrate = '115200'
+current_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
+
+import constants
+
+os.chdir(current_dir)
+
+port = constants.SERIAL_PORT
+baudrate = constants.SERIAL_BAUDRARE
+
 firmware = os.path.join(os.pardir, "firmware", "firmware-combined.bin")
 
 if not os.path.exists(firmware):

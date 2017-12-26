@@ -1,9 +1,17 @@
 import os
 import subprocess
 
-os.chdir(os.pardir)
+import sys
 
-port = '/dev/ttyUSB0'
+current_dir = os.path.dirname(os.path.realpath(__file__))
+par_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sys.path.append(par_dir)
+
+import constants
+
+os.chdir(par_dir)
+
+port = constants.SERIAL_PORT
 
 files = [
     f for f in [

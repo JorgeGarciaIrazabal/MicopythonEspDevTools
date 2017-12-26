@@ -23,6 +23,20 @@ class Component {
     mode = 0;
     /** @type Number */
     value = 0;
+
+    isInput() {
+        return [
+            PIN_MODE_DIGITAL_IN,
+            PIN_MODE_ANALOG_IN,
+        ].indexOf(this.mode) !== -1;
+    }
+
+    isOutput() {
+        return [
+            PIN_MODE_DIGITAL_OUT,
+            PIN_MODE_ANALOG_OUT,
+        ].indexOf(this.mode) !== -1;
+    }
 }
 
 class Module {

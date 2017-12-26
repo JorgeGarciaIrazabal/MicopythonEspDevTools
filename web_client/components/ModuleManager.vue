@@ -60,7 +60,6 @@
             this.moduleApi = Api.ModuleHub.getClients([this.module.name]);
 
             await  this.refreshComponentsWithLoading();
-            setInterval(this.updateInputs.bind(this), 2000);
         },
 
         data() {
@@ -93,24 +92,6 @@
                 } finally {
                     this.loading = false;
                 }
-            },
-
-            updateInputs: async function() {
-                const inputComponents = this.module.components.filter(component => {
-                    return [
-                        PIN_MODE_DIGITAL_IN,
-                        PIN_MODE_ANALOG_IN,
-                    ].indexOf(component.mode) !== -1;
-                });
-
-                inputComponents.forEach(async component => {
-                    const value = (await this.moduleApi.getComponentValue(component.name))[this.module.name];
-                    if(value.error || value.error_type) {
-                        return;
-                    }
-                    console.log(value);
-                    component.value = value;
-                })
             },
 
             onSaveConfiguration: async function() {

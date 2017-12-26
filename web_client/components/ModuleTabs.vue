@@ -10,7 +10,7 @@
         >
           {{ module.name }}
         </v-tabs-item>
-        <v-tabs-slider color="yellow"></v-tabs-slider>
+        <v-tabs-slider color="white"></v-tabs-slider>
       </v-tabs-bar>
       <v-tabs-items>
         <v-tabs-content

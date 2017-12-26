@@ -5,7 +5,8 @@
         v-bind:disabled="loading || disabled"
         name="componentName"
         label="Name"
-        v-bind:value="component.name"
+        v-model="component.provisionalName"
+        v-on:change="debounceHandleNameChange"
       />
     </v-flex>
     <v-flex xs12>
@@ -47,6 +48,11 @@
             this.moduleApi = Api.ModuleHub.getClients([this.module.name]);
             this._getComponentTag();
             this.debounceHandleValueChange = debounce(this.handleValueChange, 300);
+            this.debounceHandleNameChange = debounce(this.handleNameChange, 300);
+            this.updateIntervalId = setInterval(this._updateInput, 2000);
+        },
+        destroyed() {
+            clearInterval(this.updateIntervalId);
         },
         props: {
             /** @type Component */
@@ -103,7 +109,7 @@
             },
 
             handleValueChange: async function(value) {
-                if (this.component.mode === PIN_MODE_DIGITAL_OUT || this.component.mode === PIN_MODE_ANALOG_OUT) {
+                if (this.component.isOutput()) {
                     console.log(value);
                     this.loading = true;
                     await this.moduleApi.setComponentValue(this.component.name, value);
@@ -118,10 +124,7 @@
             },
 
             isInputDisabled() {
-                return [
-                    PIN_MODE_DIGITAL_OUT,
-                    PIN_MODE_ANALOG_OUT,
-                ].indexOf(this.component.mode) === -1;
+                return this.component.isInput();
             },
 
             _getComponentTag() {
@@ -135,7 +138,17 @@
                         this.componentTag = 'v-slider';
                         break;
                 }
-            }
+            },
+
+            _updateInput: async function() {
+                if (this.component && this.component.isInput()) {
+                    const value = (await this.moduleApi.getComponentValue(this.component.name))[this.module.name];
+                    if (value.error || value.error_type) {
+                        return;
+                    }
+                    this.component.value = value;
+                }
+            },
         },
     };
 </script>

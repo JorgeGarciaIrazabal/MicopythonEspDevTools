@@ -17,8 +17,6 @@ Vue.component('module-tabs', ModuleTabs);
 Vue.component('u-loader', ULoader);
 Vue.directive('u-loading', u_loading);
 
-
-
 Vue.use(Vuetify);
 
 new Vue({

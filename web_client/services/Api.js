@@ -8,7 +8,7 @@ class Api {
     constructor() {
         this.api = new HubsApi();
 
-        this.api.connect('ws://127.0.0.1:8888/', 3000).then(function () {
+        this.api.connect('ws://127.0.0.1:8888/', 5000).then(function () {
         }, function (error) {
             console.error(error);
         });

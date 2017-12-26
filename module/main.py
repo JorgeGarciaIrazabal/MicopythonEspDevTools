@@ -1,8 +1,7 @@
 import gc
 
-import machine
 import network
-from machine import Pin, UART
+from machine import UART
 
 import constants
 from hubs_api import HubsAPI
@@ -39,6 +38,7 @@ def connect():
         return False
 
 
+# Create the module with the name that you prefer.
 u_module = Module('upython')
 u_module.setup()
 
@@ -57,16 +57,21 @@ def save_config():
     return True
 
 
+def get_component_value(name):
+    return u_module.get_component_by_name(name).value()
+
+
 while True:
     # todo, no need to connect all the time
     if connect():
         try:
-            api = HubsAPI('ws://{0}:{1}'.format(constants.SERVER_IP, constants.SERVER_PORT) + '/upython')
+            api = HubsAPI('ws://{0}:{1}'.format(constants.SERVER_IP, constants.SERVER_PORT) + '/' + u_module.id)
             print("connected to server")
             api.ModuleHub.client.get_all_components = u_module.get_module_info
             api.ModuleHub.client.change_component_mode = u_module.change_component_mode
             api.ModuleHub.client.change_component_name = u_module.change_component_name
             api.ModuleHub.client.set_component_value = set_component_value
+            api.ModuleHub.client.get_component_value = get_component_value
             api.ModuleHub.client.save_config = u_module.save_config
             api.ModuleHub.client.read_serial = read_serial
 

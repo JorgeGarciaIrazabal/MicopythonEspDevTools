@@ -133,6 +133,9 @@ class HubsAPI(object):
             def set_component_value(self, name, value):
                 pass
 
+            def get_component_value(self, name):
+                pass
+
             def save_config(self):
                 pass
 

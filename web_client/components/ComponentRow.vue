@@ -6,7 +6,7 @@
         name="componentName"
         label="Name"
         v-bind:value="component.name"
-      ></v-text-field>
+      />
     </v-flex>
     <v-flex xs12>
       <v-select
@@ -19,77 +19,34 @@
         item-value="value"
         v-on:change="handleModeChange"
         v-bind:disabled="loading || disabled"
-      ></v-select>
+      />
     </v-flex>
     <v-flex xs12>
-      <v-text-field
-        name="input-1"
-        label="Label Text"
-        id="testing"
-        v-bind:disabled="loading || disabled"
-      ></v-text-field>
+      <component :is="componentTag"
+                 v-model="component.value"
+                 :disabled="isInputDisabled()"
+                 v-on:change="handleValueChange"
+                 v-on:input="debounceHandleValueChange"
+                 max="1024"
+      />
     </v-flex>
     <v-flex xs3>
       <v-progress-circular v-show="loading" indeterminate size="50" color="primary" class="text-xs-center" />
     </v-flex>
   </v-layout>
-
-  <!--<div key={component.pin}>-->
-  <!--<Divider/>-->
-  <!--<div className={"ComponentContainer"}>-->
-  <!--<div className={'ComponentLabel'}>-->
-  <!--{`PIN ${component.pin}`}-->
-  <!--</div>-->
-  <!--<TextField-->
-  <!--id={`pin${component.pin}`}-->
-  <!--value={component.provisionalName}-->
-  <!--onBlur={(event, name) => this.handleNameChange(component, name)}-->
-  <!--onChange={(event, value) => component.provisionalName = value}-->
-  <!--className={'ComponentName'}-->
-  <!--/>-->
-  <!--<DropDownMenu-->
-  <!--value={component.mode}-->
-  <!--onChange={(event, index, mode) => this.handleModeChange(component, mode)}-->
-  <!--className={'ComponentMode'}-->
-  <!--&gt;-->
-  <!--<MenuItem value={0} primaryText="Digital IN"/>-->
-  <!--<MenuItem value={1} primaryText="Digital OUT"/>-->
-  <!--<MenuItem value={2} primaryText="Analog IN"/>-->
-  <!--<MenuItem value={3} primaryText="Analog OUT"/>-->
-  <!--</DropDownMenu>-->
-  <!--{component.mode <= 1 && (<Toggle-->
-  <!--toggled={!!component.value}-->
-  <!--label={''}-->
-  <!--onToggle={(event, value) => this.handleValueChange(component, value)}-->
-  <!--className={'ComponentDigitalValue'}-->
-  <!--style={{-->
-  <!--width: "initial",-->
-  <!--}}-->
-  <!--/>)}-->
-  <!--{component.mode > 1 && (<Slider-->
-  <!--min={0}-->
-  <!--max={1024}-->
-  <!--step={1}-->
-  <!--value={component.value}-->
-  <!--onChange={(event, value) => this.handleValueChange(component, value)}-->
-  <!--className={'ComponentAnalogValue'}-->
-  <!--sliderStyle={{-->
-  <!--marginTop: 0,-->
-  <!--marginBottom: 0,-->
-  <!--}}-->
-  <!--/>)}-->
-  <!--</div>-->
-  <!--</div>-->
 </template>
 
 <script>
-    import Module, {Component, PIN_MODE_ANALOG_OUT, PIN_MODE_DIGITAL_OUT} from '../modules/Module';
+    import Module, {Component, PIN_MODE_ANALOG_OUT, PIN_MODE_DIGITAL_IN, PIN_MODE_DIGITAL_OUT, PIN_MODE_ANALOG_IN} from '../modules/Module';
     import Api from '../services/Api';
+    import debounce from 'lodash/debounce';
 
     export default {
         name: 'component-row',
         created() {
             this.moduleApi = Api.ModuleHub.getClients([this.module.name]);
+            this._getComponentTag();
+            this.debounceHandleValueChange = debounce(this.handleValueChange, 300);
         },
         props: {
             /** @type Component */
@@ -117,8 +74,15 @@
                     {value: 3, text: 'Analog OUT'},
                 ],
                 loading: false,
+                componentTag: null,
             };
         },
+
+        watch: {
+
+
+        },
+
         methods: {
             handleModeChange: async function(mode) {
                 try {
@@ -135,11 +99,15 @@
                     this.loading = false;
                 }
                 this.component.mode = mode;
+                this._getComponentTag();
             },
 
             handleValueChange: async function(value) {
                 if (this.component.mode === PIN_MODE_DIGITAL_OUT || this.component.mode === PIN_MODE_ANALOG_OUT) {
+                    console.log(value);
+                    this.loading = true;
                     await this.moduleApi.setComponentValue(this.component.name, value);
+                    this.loading = false;
                     this.component.value = value;
                 }
             },
@@ -148,6 +116,26 @@
                 await this.moduleApi.changeComponentName(this.component.name, this.component.provisionalName);
                 this.component.name = this.component.provisionalName;
             },
+
+            isInputDisabled() {
+                return [
+                    PIN_MODE_DIGITAL_OUT,
+                    PIN_MODE_ANALOG_OUT,
+                ].indexOf(this.component.mode) === -1;
+            },
+
+            _getComponentTag() {
+                switch (this.component.mode) {
+                    case PIN_MODE_DIGITAL_OUT:
+                    case PIN_MODE_DIGITAL_IN:
+                        this.componentTag = 'v-switch';
+                        break;
+                    case PIN_MODE_ANALOG_OUT:
+                    case PIN_MODE_ANALOG_IN:
+                        this.componentTag = 'v-slider';
+                        break;
+                }
+            }
         },
     };
 </script>

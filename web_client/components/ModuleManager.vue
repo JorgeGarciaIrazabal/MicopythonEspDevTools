@@ -1,5 +1,5 @@
 <template>
-  <div class="ModuleManager__container" v-u-loading="loading">
+  <v-container class="ModuleManager__container" v-u-loading="loading">
     <v-container grid-list-md>
       <component-row v-for="component in module.components"
                      v-bind:component="component"
@@ -10,13 +10,42 @@
     <v-alert color="error" icon="warning" v-bind:value="errorMessage">
       {{errorMessage}}
     </v-alert>
-    <!--<u-loader :loading="true"></u-loader>-->
-  </div>
+    <v-speed-dial bottom right hover="hover">
+      <v-btn
+        slot="activator"
+        color="blue darken-2"
+        dark
+        fab
+        hover
+      >
+        <v-icon>add</v-icon>
+        <v-icon>close</v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        dark
+        small
+        color="green"
+        v-on:click="refreshComponentsWithLoading"
+      >
+        <v-icon>replay</v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        dark
+        small
+        color="green"
+        v-on:click="onSaveConfiguration"
+      >
+        <v-icon>save</v-icon>
+      </v-btn>
+    </v-speed-dial>
+  </v-container>
 </template>
 
 <script>
     import Api from '../services/Api';
-    import Module, {Component} from '../modules/Module';
+    import Module, {Component, PIN_MODE_ANALOG_IN, PIN_MODE_DIGITAL_IN} from '../modules/Module';
 
     export default {
         name: 'module-manager',
@@ -27,12 +56,13 @@
                 required: false,
             },
         },
-        created() {
+        created: async function() {
             this.moduleApi = Api.ModuleHub.getClients([this.module.name]);
-            setInterval(async() => {
-                await this.refreshComponents();
-            }, 2000);
+
+            await  this.refreshComponentsWithLoading();
+            setInterval(this.updateInputs.bind(this), 2000);
         },
+
         data() {
             return {
                 disabled: false,
@@ -42,24 +72,58 @@
         },
         methods: {
             refreshComponents: async function() {
+                const isConnected = await Api.UPythonUtilsHub.server.isUpythonConnected(this.module.name);
+                if (isConnected) {
+                    const components = (await this.moduleApi.getAllComponents())[this.module.name];
+                    if (components.error || components.error_type) {
+                        this.errorMessage = components.error || components.error_type;
+                        return;
+                    }
+                    this.errorMessage = null;
+                    components.map((component) => {
+                        this._createOrUpdateComponent(component);
+                    });
+                }
+            },
+
+            refreshComponentsWithLoading: async function (){
                 this.loading = true;
                 try {
-                    const isConnected = await Api.UPythonUtilsHub.server.isUpythonConnected(this.module.name);
-                    if (isConnected) {
-                        const components = (await this.moduleApi.getAllComponents())[this.module.name];
-                        if (components.error) {
-                            this.errorMessage = 'testing';
-                            return;
-                        }
-                        this.errorMessage = null;
-                        components.map((component) => {
-                            this._createOrUpdateComponent(component);
-                        });
-                    }
+                    await this.refreshComponents();
                 } finally {
                     this.loading = false;
                 }
             },
+
+            updateInputs: async function() {
+                const inputComponents = this.module.components.filter(component => {
+                    return [
+                        PIN_MODE_DIGITAL_IN,
+                        PIN_MODE_ANALOG_IN,
+                    ].indexOf(component.mode) !== -1;
+                });
+
+                inputComponents.forEach(async component => {
+                    const value = (await this.moduleApi.getComponentValue(component.name))[this.module.name];
+                    if(value.error || value.error_type) {
+                        return;
+                    }
+                    console.log(value);
+                    component.value = value;
+                })
+            },
+
+            onSaveConfiguration: async function() {
+                this.loading = true;
+                try {
+                    await this.moduleApi.saveConfig();
+                } catch (e) {
+                    this.errorMessage = e.message;
+                } finally {
+                    this.loading = false;
+                }
+            },
+
             readSerial() {
                 setInterval(async() => {
                     const serial = (await this.moduleApi.readSerial())[this.module.name];
@@ -94,7 +158,11 @@
   .ModuleManager {
     &__container {
       position: relative;
-      min-height: 5rem;
+      min-height: 10rem;
+      padding-bottom: 5rem;
+      .speed-dial {
+        position: absolute;
+      }
     }
     &__loader-container {
       position: absolute;
